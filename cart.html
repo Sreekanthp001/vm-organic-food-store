@@ -8,35 +8,62 @@
 <body class="bg-gray-50 p-10">
     <div class="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-md">
         <h1 class="text-3xl font-bold mb-6 text-green-700">VentureMond Shopping Cart</h1>
-        <div id="cart-items" class="space-y-4">
-            </div>
+        
+        <div id="cart-items" class="space-y-4"></div>
+
         <div class="mt-8 border-t pt-6 flex justify-between items-center">
             <h2 class="text-xl font-bold">Total: $<span id="total-price">0</span></h2>
-            <button onclick="window.location.href='index.html'" class="bg-stone-200 px-6 py-2 rounded-lg">Back to Store</button>
-            <button class="bg-green-600 text-white px-8 py-3 rounded-lg font-bold">Checkout</button>
+            <div class="space-x-4">
+                <button onclick="window.location.href='index.html'" class="bg-stone-200 px-6 py-2 rounded-lg hover:bg-stone-300 transition">Back to Store</button>
+                <button id="checkout-btn" class="bg-green-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-green-700 transition">Checkout</button>
+            </div>
         </div>
     </div>
 
     <script>
+        // 1. Load data from LocalStorage
         const cartItems = JSON.parse(localStorage.getItem('vm_organic_cart')) || [];
         const container = document.getElementById('cart-items');
+        const totalPriceElem = document.getElementById('total-price');
         let total = 0;
 
+        // 2. Render items
         if(cartItems.length === 0) {
-            container.innerHTML = "<p class='text-gray-500'>Your cart is empty mawa!</p>";
+            container.innerHTML = `
+                <div class="text-center py-10">
+                    <p class='text-gray-500 text-lg'>Your cart is empty mawa!</p>
+                </div>`;
         } else {
             cartItems.forEach(item => {
                 total += item.price;
                 container.innerHTML += `
                     <div class="flex items-center justify-between border-b pb-4">
-                        <img src="${item.image}" class="w-16 h-16 rounded-md object-cover">
-                        <div class="flex-1 ml-4"><h3 class="font-bold">${item.name}</h3></div>
-                        <p class="font-bold">$${item.price}</p>
+                        <img src="${item.image}" class="w-16 h-16 rounded-md object-cover border">
+                        <div class="flex-1 ml-4"><h3 class="font-bold text-lg">${item.name}</h3></div>
+                        <p class="font-bold text-green-700">$${item.price}</p>
                     </div>
                 `;
             });
-            document.getElementById('total-price').innerText = total;
+            totalPriceElem.innerText = total;
         }
+
+        // 3. Checkout Logic (This was missing)
+        const checkoutBtn = document.getElementById('checkout-btn');
+        checkoutBtn.addEventListener('click', () => {
+            if(cartItems.length === 0) {
+                alert("Mawa, cart empty ga undi! Mundu konni items add chey.");
+                return;
+            }
+
+            // Success Animation/Message
+            alert("VentureMond Organic: Payment Successful!\nYour order has been placed. Thank you for shopping fresh!");
+
+            // Clear the cart
+            localStorage.removeItem('vm_organic_cart');
+
+            // Redirect to home
+            window.location.href = 'index.html';
+        });
     </script>
 </body>
 </html>
