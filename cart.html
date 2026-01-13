@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Cart | VentureMond Organic</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 p-10">
+    <div class="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-md">
+        <h1 class="text-3xl font-bold mb-6 text-green-700">VentureMond Shopping Cart</h1>
+        <div id="cart-items" class="space-y-4">
+            </div>
+        <div class="mt-8 border-t pt-6 flex justify-between items-center">
+            <h2 class="text-xl font-bold">Total: $<span id="total-price">0</span></h2>
+            <button onclick="window.location.href='index.html'" class="bg-stone-200 px-6 py-2 rounded-lg">Back to Store</button>
+            <button class="bg-green-600 text-white px-8 py-3 rounded-lg font-bold">Checkout</button>
+        </div>
+    </div>
+
+    <script>
+        const cartItems = JSON.parse(localStorage.getItem('vm_organic_cart')) || [];
+        const container = document.getElementById('cart-items');
+        let total = 0;
+
+        if(cartItems.length === 0) {
+            container.innerHTML = "<p class='text-gray-500'>Your cart is empty mawa!</p>";
+        } else {
+            cartItems.forEach(item => {
+                total += item.price;
+                container.innerHTML += `
+                    <div class="flex items-center justify-between border-b pb-4">
+                        <img src="${item.image}" class="w-16 h-16 rounded-md object-cover">
+                        <div class="flex-1 ml-4"><h3 class="font-bold">${item.name}</h3></div>
+                        <p class="font-bold">$${item.price}</p>
+                    </div>
+                `;
+            });
+            document.getElementById('total-price').innerText = total;
+        }
+    </script>
+</body>
+</html>

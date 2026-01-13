@@ -1,103 +1,65 @@
 'use strict';
 
+// VentureMond Organic Cart Logic
+let cart = JSON.parse(localStorage.getItem('vm_organic_cart')) || [];
+
 /**
- * navbar toggle & Smooth Scroll Fix
+ * Navbar Toggle
  */
 const navOpenBtn = document.querySelector("[data-nav-open-btn]");
 const navbar = document.querySelector("[data-navbar]");
 const navCloseBtn = document.querySelector("[data-nav-close-btn]");
-const navLinks = document.querySelectorAll(".navbar-link"); // Added for navigation
 
-const navElems = [navOpenBtn, navCloseBtn];
-
-for (let i = 0; i < navElems.length; i++) {
-  navElems[i].addEventListener("click", function () {
-    navbar.classList.toggle("active");
-  });
-}
-
-// VentureMond Fix: Close mobile menu when a link is clicked
-navLinks.forEach(link => {
-  link.addEventListener("click", () => {
-    navbar.classList.remove("active");
-  });
+[navOpenBtn, navCloseBtn].forEach(btn => {
+  btn?.addEventListener("click", () => navbar.classList.toggle("active"));
 });
 
 /**
- * search toggle
+ * Add to Cart Functionality
+ * Deentho gallery lo unna items ni select cheskovachu
  */
-const searchContainer = document.querySelector("[data-search-wrapper]");
-const searchBtn = document.querySelector("[data-search-btn]");
-
-if(searchBtn) {
-    searchBtn.addEventListener("click", function () {
-      searchContainer.classList.toggle("active");
+function initGalleryAction() {
+  const galleryCards = document.querySelectorAll('.gallery-card');
+  
+  galleryCards.forEach(card => {
+    card.style.cursor = 'pointer';
+    card.addEventListener('click', function() {
+      const productName = this.querySelector('h3').innerText;
+      const productImg = this.querySelector('img').src;
+      
+      const item = {
+        name: productName,
+        image: productImg,
+        price: 10, // Default price as static
+        quantity: 1
+      };
+      
+      cart.push(item);
+      localStorage.setItem('vm_organic_cart', JSON.stringify(cart));
+      alert(`${productName} added to VentureMond Organic Cart!`);
+      updateCartBadge();
     });
-}
-
-/**
- * whishlist & cart toggle (VentureMond Logic)
- */
-const panelBtns = document.querySelectorAll("[data-panel-btn]");
-const sidePanels = document.querySelectorAll("[data-side-panel]");
-
-for (let i = 0; i < panelBtns.length; i++) {
-  panelBtns[i].addEventListener("click", function () {
-    let clickedElemDataValue = this.dataset.panelBtn;
-    for (let i = 0; i < sidePanels.length; i++) {
-      if (clickedElemDataValue === sidePanels[i].dataset.sidePanel) {
-        sidePanels[i].classList.toggle("active");
-      } else {
-        sidePanels[i].classList.remove("active");
-      }
-    }
   });
 }
 
-/**
- * back to top
- */
-const backTopBtn = document.querySelector("[data-back-top-btn]");
-
-window.addEventListener("scroll", function () {
-  if(backTopBtn) {
-    window.scrollY >= 100 ? backTopBtn.classList.add("active")
-      : backTopBtn.classList.remove("active");
-  }
-});
-
-/**
- * VentureMond Extra: Gallery Image Hover Animation Fix
- * Ensures images in gallery respond to user interaction
- */
-const productDisplay = document.querySelector("[data-product-display]");
-const productThumbnails = document.querySelectorAll("[data-product-thumbnail]");
-
-if(productThumbnails.length > 0) {
-    for (let i = 0; i < productThumbnails.length; i++) {
-      productThumbnails[i].addEventListener("click", function () {
-        productDisplay.src = this.src;
-        productDisplay.classList.add("fade-anim");
-    
-        setTimeout(function () {
-          productDisplay.classList.remove("fade-anim");
-        }, 250);
-      });
-    }
+function updateCartBadge() {
+  const badge = document.querySelector('.cart-badge');
+  if(badge) badge.innerText = cart.length;
 }
 
+// Initialize on load
+window.onload = () => {
+  initGalleryAction();
+  updateCartBadge();
+};
+
 /**
- * Smooth Scroll for Navigation Links
- * Fixes the "Broken Links" feedback from manager
+ * Smooth Scroll Fix for Nav Links
  */
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const targetId = this.getAttribute('href');
-        if(targetId !== "#") {
-            document.querySelector(targetId).scrollIntoView({
-                behavior: 'smooth'
-            });
-        }
-    });
+  anchor.addEventListener('click', function (e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if(target) target.scrollIntoView({ behavior: 'smooth' });
+  });
 });
